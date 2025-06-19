@@ -4,21 +4,27 @@
   "description": "A full-stack JavaScript application with Express API and React frontend",
   "main": "server/index.js",
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "concurrently \"npm run mongodb\" \"wait-on tcp:27017 && npm run server\" \"wait-on tcp:27017 && npm run client\"",
+    "start:docker": "./start.sh",
     "server": "nodemon server/index.js",
     "client": "cd client && npm start",
     "install-all": "npm install && cd client && npm install",
-    "build": "cd client && npm run build"
+    "build": "cd client && npm run build",
+    "mongodb": "docker-compose up mongodb",
+    "mongodb:down": "docker-compose down",
+    "mongodb:clean": "docker-compose down -v"
   },
   "keywords": ["express", "react", "javascript", "fullstack"],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "mongoose": "^8.0.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.1",
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "wait-on": "^7.2.0"
   }
 } 

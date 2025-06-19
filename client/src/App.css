@@ -26,9 +26,12 @@
 }
 
 .App-main {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
 }
 
 .card {
@@ -135,6 +138,12 @@
   font-size: 1.4rem;
 }
 
+.info-card h4 {
+  color: #2c3e50;
+  font-size: 1.2rem;
+  margin: 1.5rem 0 1rem 0;
+}
+
 .info-card ul {
   list-style: none;
   padding: 0;
@@ -174,5 +183,10 @@
   
   .card {
     padding: 1.5rem;
+  }
+  
+  .App-main {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 } 

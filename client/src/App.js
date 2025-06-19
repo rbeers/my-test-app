@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import TodoList from './components/TodoList';
 import './App.css';
 
 function App() {
@@ -40,12 +41,16 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>🚀 Full-Stack JavaScript Demo</h1>
-        <p>Express API + React Frontend</p>
+        <p>Express API + React Frontend + MongoDB Database</p>
       </header>
       
       <main className="App-main">
+        {/* Todo List Section */}
+        <TodoList />
+
+        {/* API Demo Section */}
         <div className="card">
-          <h2>API Interaction</h2>
+          <h2>🔌 API Interaction Demo</h2>
           <p>Click the buttons below to interact with the Express API:</p>
           
           <div className="button-group">
@@ -85,8 +90,18 @@ function App() {
           <ul>
             <li><strong>Express Server:</strong> Running on port 3001 with auto-reload</li>
             <li><strong>React App:</strong> Running on port 3000 with hot reload</li>
-            <li><strong>API Endpoints:</strong> /api/hello and /api/health</li>
+            <li><strong>MongoDB Database:</strong> Running locally with persistent storage</li>
+            <li><strong>Todo API Endpoints:</strong> Full CRUD operations with database</li>
             <li><strong>Auto-reload:</strong> Changes are reflected immediately</li>
+          </ul>
+          
+          <h4>🎯 Database Features Demonstrated:</h4>
+          <ul>
+            <li><strong>Create:</strong> Add new todos with title, description, and priority</li>
+            <li><strong>Read:</strong> Fetch and display all todos from database</li>
+            <li><strong>Update:</strong> Toggle completion status and update todo details</li>
+            <li><strong>Delete:</strong> Remove todos from the database</li>
+            <li><strong>Persistence:</strong> Data survives server restarts</li>
           </ul>
         </div>
       </main>
