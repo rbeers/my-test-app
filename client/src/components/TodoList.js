@@ -7,6 +7,8 @@ const TodoList = () => {
   const [newTodo, setNewTodo] = useState({ title: '', description: '', priority: 'medium' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({ title: '', description: '', priority: 'medium' });
 
   // Fetch todos from API
   const fetchTodos = async () => {
@@ -73,10 +75,35 @@ const TodoList = () => {
         todo._id === id ? response.data.data : todo
       ));
       setError(null);
+      setEditingId(null);
+      setEditForm({ title: '', description: '', priority: 'medium' });
     } catch (err) {
       setError('Failed to update todo');
       console.error('Error updating todo:', err);
     }
+  };
+
+  // Start editing a todo
+  const startEditing = (todo) => {
+    setEditingId(todo._id);
+    setEditForm({
+      title: todo.title,
+      description: todo.description || '',
+      priority: todo.priority
+    });
+  };
+
+  // Cancel editing
+  const cancelEditing = () => {
+    setEditingId(null);
+    setEditForm({ title: '', description: '', priority: 'medium' });
+  };
+
+  // Handle edit form submission
+  const handleEditSubmit = (e, id) => {
+    e.preventDefault();
+    if (!editForm.title.trim()) return;
+    updateTodo(id, editForm);
   };
 
   useEffect(() => {
@@ -141,41 +168,83 @@ const TodoList = () => {
         ) : (
           todos.map(todo => (
             <div key={todo._id} className={`todo-item ${todo.completed ? 'completed' : ''}`}>
-              <div className="todo-content">
-                <div className="todo-header">
-                  <input
-                    type="checkbox"
-                    checked={todo.completed}
-                    onChange={() => toggleTodo(todo._id)}
-                    className="todo-checkbox"
+              {editingId === todo._id ? (
+                // Edit mode
+                <form onSubmit={(e) => handleEditSubmit(e, todo._id)} className="edit-form">
+                  <div className="form-row">
+                    <input
+                      type="text"
+                      value={editForm.title}
+                      onChange={(e) => setEditForm({...editForm, title: e.target.value})}
+                      className="todo-input"
+                      required
+                    />
+                    <select
+                      value={editForm.priority}
+                      onChange={(e) => setEditForm({...editForm, priority: e.target.value})}
+                      className="priority-select"
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                    </select>
+                    <button type="submit" className="save-btn">Save</button>
+                    <button type="button" onClick={cancelEditing} className="cancel-btn">Cancel</button>
+                  </div>
+                  <textarea
+                    value={editForm.description}
+                    onChange={(e) => setEditForm({...editForm, description: e.target.value})}
+                    className="todo-description"
+                    placeholder="Description (optional)"
                   />
-                  <h3 className="todo-title">{todo.title}</h3>
-                  <span 
-                    className="priority-badge"
-                    style={{ backgroundColor: getPriorityColor(todo.priority) }}
-                  >
-                    {todo.priority}
-                  </span>
-                </div>
-                {todo.description && (
-                  <p className="todo-description-text">{todo.description}</p>
-                )}
-                <div className="todo-meta">
-                  <small>Created: {new Date(todo.createdAt).toLocaleDateString()}</small>
-                  {todo.completed && (
-                    <small>Completed: {new Date(todo.updatedAt).toLocaleDateString()}</small>
-                  )}
-                </div>
-              </div>
-              <div className="todo-actions">
-                <button
-                  onClick={() => deleteTodo(todo._id)}
-                  className="delete-btn"
-                  title="Delete todo"
-                >
-                  🗑️
-                </button>
-              </div>
+                </form>
+              ) : (
+                // View mode
+                <>
+                  <div className="todo-content">
+                    <div className="todo-header">
+                      <input
+                        type="checkbox"
+                        checked={todo.completed}
+                        onChange={() => toggleTodo(todo._id)}
+                        className="todo-checkbox"
+                      />
+                      <h3 className="todo-title">{todo.title}</h3>
+                      <span 
+                        className="priority-badge"
+                        style={{ backgroundColor: getPriorityColor(todo.priority) }}
+                      >
+                        {todo.priority}
+                      </span>
+                    </div>
+                    {todo.description && (
+                      <p className="todo-description-text">{todo.description}</p>
+                    )}
+                    <div className="todo-meta">
+                      <small>Created: {new Date(todo.createdAt).toLocaleDateString()}</small>
+                      {todo.completed && (
+                        <small>Completed: {new Date(todo.updatedAt).toLocaleDateString()}</small>
+                      )}
+                    </div>
+                  </div>
+                  <div className="todo-actions">
+                    <button
+                      onClick={() => startEditing(todo)}
+                      className="edit-btn"
+                      title="Edit todo"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      onClick={() => deleteTodo(todo._id)}
+                      className="delete-btn"
+                      title="Delete todo"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           ))
         )}
